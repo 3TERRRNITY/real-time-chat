@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styles from "../styles/Main.module.css"
 import { Link } from 'react-router-dom'
+import { Button, TextInput } from '@mantine/core';
 
 const FIELDS = {
   USERNAME: 'name',
@@ -8,39 +9,73 @@ const FIELDS = {
 }
 
 const Main = () => {
-  const {USERNAME, ROOM} = FIELDS
-  const [values, setValues] = useState({ [USERNAME]: '', [ROOM]: '' })
-  const [isDisabled, setIsDisabled] = useState(true)
-  const handleSubmit = (e) => {
-    setIsDisabled(Object.values(values).some(v =>  !v))
-    
-    if(!isDisabled) e.preventDefault()
-  }
-  const handleChange = ( {target: {value, name}}) => {
-    setValues({...values, [name]: value })
+  const { USERNAME, ROOM } = FIELDS;
+  const [values, setValues] = useState({ [USERNAME]: '', [ROOM]: '' });
+  const [isDisabled, setIsDisabled] = useState(true);
 
-  }
-  console.log(values)
+  const handleChange = ({ target: { value, name } }) => {
+    setValues(prevValues => ({
+      ...prevValues,
+      [name]: value
+    }));
+    setIsDisabled(Object.values({ ...values, [name]: value }).some(v => !v));
+  };
+
+  const handleSubmit = (e) => {
+    if (isDisabled) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.titleContainer}>
-        <h2 className={styles.title}>Sign in</h2>
+        <h2 className={styles.title}>Join</h2>
       </div>
       <form className={styles.form}>
-        <div className={styles.formItem}>
-          <input type='text' onChange={handleChange} className={styles.input} name={USERNAME} placeholder='username' value={values[USERNAME]} required autoComplete='off'  />
+        <div className={styles.formInputs}>
+          <div className={styles.formItem}>
+            <TextInput
+              type='text'
+              onChange={handleChange}
+              className={styles.input}
+              name={USERNAME}
+              placeholder='Имя пользователя'
+              value={values[USERNAME]}
+              required
+              autoComplete='off'
+            />
+          </div>
+          <div className={styles.formItem}>
+            <TextInput
+              type='text'
+              onChange={handleChange}
+              className={styles.input}  
+              name={ROOM}
+              placeholder='Комната'
+              value={values[ROOM]}
+              required
+              autoComplete='off'
+            />
+          </div>
         </div>
-        <div className={styles.formItem}>
-          <input type='text' onChange={handleChange} className={styles.input} name={ROOM} placeholder='room' value={values[ROOM]} required autoComplete='off'  />
-        </div>
-        <Link className={styles.formItem} to={`/chat?name=${values[USERNAME]}&room=${values[ROOM]}`}>
-          <button type='submit' onClick={handleSubmit} className={styles.button}>
-            Join
-          </button>
+        
+        <Link
+          className={styles.formItem}
+          to={`/chat?name=${values[USERNAME]}&room=${values[ROOM]}`}
+        >
+          <Button
+            type='submit'
+            onClick={handleSubmit}
+            className={styles.button}
+            disabled={isDisabled}
+          >
+            LFG!
+          </Button>
         </Link>
       </form>
     </div>
-  )
-}
+  );
+};
 
 export default Main
